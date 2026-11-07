@@ -62,3 +62,14 @@ def test_make_quiz_uses_a_term_from_requested_lecture(monkeypatch):
 
 def test_make_quiz_reports_when_lecture_has_no_terms():
     assert "第0回の用語は用語集にありません" in tools.make_quiz(0)
+
+
+def test_save_learning_log_writes_content_to_learning_log_directory(tmp_path, monkeypatch):
+    monkeypatch.setattr(tools, "LEARNING_LOG_DIR", tmp_path / "learning_log")
+
+    result = tools.save_learning_log("今日は用語集を学んだ。")
+
+    saved_files = list((tmp_path / "learning_log").glob("*.md"))
+    assert len(saved_files) == 1
+    assert saved_files[0].read_text(encoding="utf-8") == "今日は用語集を学んだ。"
+    assert "learning_log/" in result

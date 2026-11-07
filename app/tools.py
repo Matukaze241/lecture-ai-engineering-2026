@@ -6,10 +6,12 @@
 
 import json
 import random
+from datetime import datetime
 from functools import cache
 from pathlib import Path
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+LEARNING_LOG_DIR = Path(__file__).resolve().parent.parent / "learning_log"
 MAX_RESULTS = 3
 
 
@@ -70,7 +72,7 @@ def search_glossary(query: str) -> str:
 
 def get_lecture_summary(lecture: int) -> str:
     """指定した回（1始まりの整数）の講義の要点を返す。
-
+    
     「第3回では何を学ぶ？」のように、回の内容や関係を聞かれたときに使う。
     """
     path = DATA_DIR / "lectures" / f"{lecture:02d}.md"
@@ -98,3 +100,15 @@ def make_quiz(lecture: int) -> str:
         },
         ensure_ascii=False,
     )
+
+
+def save_learning_log(content: str) -> str:
+    """学習内容の記録を learning_log/ に保存する。
+
+    学習内容や気づきを記録するよう頼まれたときに使う。保存する文章を content に入れる。
+    """
+    LEARNING_LOG_DIR.mkdir(parents=True, exist_ok=True)
+    filename = datetime.now().strftime("%Y%m%d-%H%M%S-%f") + ".md"
+    path = LEARNING_LOG_DIR / filename
+    path.write_text(content, encoding="utf-8")
+    return f"学習記録を {path.relative_to(LEARNING_LOG_DIR.parent)} に保存しました。"
