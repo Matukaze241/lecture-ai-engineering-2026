@@ -46,3 +46,30 @@ def test_default_question_of_lecture1_is_answerable_from_glossary():
     assert "3レベル" in DEFAULT_QUESTION
     hits = json.loads(tools.search_glossary("3レベル"))
     assert hits[0]["term"] == "宿題の3レベル"
+
+
+def test_make_quiz_uses_a_term_from_requested_lecture(monkeypatch):
+    terms = [term for term in tools.load_glossary() if term["lecture"] == 2]
+    monkeypatch.setattr(tools.random, "choice", lambda choices: choices[0])
+
+    quiz = json.loads(tools.make_quiz(2))
+
+    assert quiz == {
+        "question": f"「{terms[0]['term']}」の意味は？",
+        "answer": terms[0]["definition"],
+    }
+
+
+def test_make_quiz_reports_when_lecture_has_no_terms():
+    assert "第0回の用語は用語集にありません" in tools.make_quiz(0)
+
+
+def test_save_learning_log_writes_content_to_learning_log_directory(tmp_path, monkeypatch):
+    monkeypatch.setattr(tools, "LEARNING_LOG_DIR", tmp_path / "learning_log")
+
+    result = tools.save_learning_log("今日は用語集を学んだ。")
+
+    saved_files = list((tmp_path / "learning_log").glob("*.md"))
+    assert len(saved_files) == 1
+    assert saved_files[0].read_text(encoding="utf-8") == "今日は用語集を学んだ。"
+    assert "learning_log/" in result
