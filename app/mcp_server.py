@@ -27,8 +27,8 @@ server = MCPServer(
 server.tool()(tools.search_glossary)
 server.tool()(tools.get_lecture_summary)
 
+# TODO(第6回 演習): tools.get_lecture_summary も公開しよう（上の1行と同じ書き方）
 # 第3回で make_quiz を作った人は、それも公開できる
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="用語集 MCP サーバー")
