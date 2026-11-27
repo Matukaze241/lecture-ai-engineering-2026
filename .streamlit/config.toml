@@ -2,9 +2,7 @@
 [server]
 headless = true
 port = 8501
-enableCORS = falseexercises、OSはLinuxです。READMEに記載された想定環境はPython 3.12・uvを使うCodespacesです。ただし、依頼に従いコマンドを実行していないため、実際に選択されているPythonのバージョン、uvの有無、環境変数やAPIキーの設定状況は確認していません。
-
-
+enableCORS = false
 enableXsrfProtection = false
 
 [browser]
