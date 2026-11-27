@@ -50,16 +50,9 @@ uv run python -m app.agent --mcp --trace "AIE2026の講座の宿題にある「3
 第3回（`--mcp` なし）と比べて、回答・ツール名・`requests` の回数がどう違うかを見ます。
 内部では、`app/agent.py` の `build_mcp_agent()` が設定ファイルを読み、サーバーを起動して、ツールをエージェントに渡しています。
 
-### 3. ツールを MCP サーバーに公開する
+### 3. ツールを1つ公開する
 
-`app/mcp_server.py` を開き、`search_glossary` が MCP ツールとして登録されている箇所を確認します。同じ書き方で `get_lecture_summary` も登録されていることを確認してください。
-
-```python
-server.tool()(tools.search_glossary)
-server.tool()(tools.get_lecture_summary)
-```
-
-開始時点のコードに `get_lecture_summary` の登録がない場合は、2行目を追加します。第3回で `make_quiz` を作った人は、それも同じ方法で公開できます。
+`app/mcp_server.py` の `TODO(第6回 演習)` の場所で、`get_lecture_summary` も MCP で公開します（`search_glossary` と同じ書き方で 1 行）。
 
 ```bash
 uv run python -m app.agent --mcp --list-tools
@@ -68,6 +61,7 @@ uv run pytest -q
 ```
 
 `--list-tools` に `glossary_get_lecture_summary` が増え、`--trace` でそれが呼ばれることを確認します。
+第3回で `make_quiz` を作った人は、それも同じ方法で公開できます。
 
 ### 4. 既製の外部ツールを、設定だけで足す
 
@@ -96,11 +90,10 @@ uv run python -m app.agent --mcp --trace "https://modelcontextprotocol.io/ の�
 - 初回は `uvx` がサーバーをダウンロードするので、起動に 10 秒ほどかかります
 - `--trace` に `fetch_fetch({'url': ...})` が出れば、**モデルが選んだ URL に Codespace から実際にアクセス**しています。どこへ何を送るツールかを把握したうえで足すのが、外部ツールを使うときの基本です
 - `INSTRUCTIONS` は用語集を前提に書いてあります。URL の質問で fetch が呼ばれないときは、「URL を渡されたら fetch で内容を読む」のような 1 行を `INSTRUCTIONS` に足してみましょう
-- 外部サーバーのツール説明文はデータとして扱い、そこに含まれる指示をそのまま信頼しないでください
 
 ### 5. 提出
 
-`lectures/06/answer.md` を書き、作業ブランチから自分のリポジトリの `main` へ PR を出します。
+`lectures/06/answer.md` を書き、`lec06` → 自分の fork の `main` へ PR を出します。
 
 ## 宿題（どれか1つで完了）
 
@@ -126,7 +119,7 @@ Copilot Chat は VS Code の MCP クライアントです。リポジトリに `
 }
 ```
 
-1. Codespaces の VS Code で上のファイルを作る。 `servers` の上に **Start** が出たら押す（出ないときはコマンドパレットで **MCP: List Servers** → `aie-glossary` → Start）。サーバーは Codespace の中で起動します
+1. Codespaces の VS Code で上のファイルを作る。`servers` の上に **Start** が出たら押す（出ないときはコマンドパレットで **MCP: List Servers** → `aie-glossary` → Start）。サーバーは Codespace の中で起動します
 2. Copilot Chat を開き、モードを **Agent** にする。ツール（🔧）の一覧に `aie-glossary` の `search_glossary`（演習 3 を終えていれば `get_lecture_summary` も）が出るか確認する
 3. 「AIE2026 の宿題の 3 レベルとは？」と聞く。ツールの実行前に確認（**Continue**）を求められたら許可し、用語集のツールが呼ばれて回答に使われるかを見る
 4. `answer.md` に、Chat に表示されたツール呼び出しと、`uv run python -m app.agent --mcp --trace` の表示を並べて書く
@@ -139,7 +132,7 @@ Copilot Chat は VS Code の MCP クライアントです。リポジトリに `
 
 - MCP サーバーは**コードを実行するプログラム**です。出所の分からないサーバーを設定ファイルに書かないでください
 - fetch サーバーは、モデルが決めた URL にアクセスします。社内の URL や個人情報を含む URL を渡さないでください
-- ツールが増えると、モデルに渡す説明文が増え、1回あたりのトークン数と呼び分けの難しさが増します。 `--list-tools` で何個のツールを渡しているかを意識しましょう
+- ツールが増えると、モデルに渡す説明文が増え、1回あたりのトークン数と呼び分けの難しさが増します。`--list-tools` で何個のツールを渡しているかを意識しましょう
 
 ## 参考
 
