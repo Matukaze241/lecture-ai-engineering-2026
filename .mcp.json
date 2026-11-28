@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "aie-glossary": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "python", "-m", "app.mcp_server"]
+    }
+  }
+}
